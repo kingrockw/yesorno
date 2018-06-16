@@ -17,21 +17,38 @@ Yesorno.prototype = {
             }
         }
         var address = Blockchain.transaction.from;
-        var defaultData = JSON.parse(LocalContractStorage.get(address));
-        var data = Object.prototype.toString.call(defaultData) == '[object Object]' ? defaultData : {};
+        var defaultDataStr = LocalContractStorage.get(address);
+        var data = {}
+        try{
+            if(defaultDataStr){
+                data = JSON.parse(defaultDataStr)
+            }
+        }catch (e){
+
+        }
         var result = data[key]
-        if (result) {
-             throw new Error({
-                msg:'该名称你已测试',
-                value:result
-            })
-        }else{
+        if (!result) {
             data[key] = myRandom()
         }
         LocalContractStorage.set(address, JSON.stringify(data));
-        return data[key]
     },
-    get: function () {
+    get: function (key) {
+        var address = Blockchain.transaction.from;
+        var dataStr = LocalContractStorage.get(address)
+        var data ={}
+        try{
+            if(dataStr){
+                data = JSON.parse(dataStr)
+            }
+        }catch (e){
+
+        }
+        if(data[key]){
+            return data[key]
+        }
+        return 'No data pending inquiry';
+    },
+    getAll: function () {
         var address = Blockchain.transaction.from;
         return LocalContractStorage.get(address);
     }

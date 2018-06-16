@@ -15,162 +15,28 @@
 	<script src=./lib/jquery.js></script>
 	<script src=./lib/nebPay.js></script>
 	<script src=./lib/nebulas.js></script>
-	 <link rel="stylesheet" href="index.css">
+    <script src=./index.js></script>
+    <link rel="stylesheet" href="index.css">
 	<script >
-	var dappAddress = "n1rHDqGfUpKc6eiGNRz7NTZ6b8Pn2WQbFB1";
-	var hash = "9f82cb342f3fd192042871b802523fa0c60b24d7310cd0896c844bc147ca4d18";
-	var NebPay = require("nebpay");
-	var nebPay = new NebPay();
-	if (typeof webExtensionWallet === "undefined") {
-	  toast('星云钱包环境未运行，请安装钱包插件')
-	}
 
-	function toast (text) {
-	  $('#toast').html(text);
-	  $('#toast').show();
-	  setTimeout(function () {
-	    $('#toast').addClass('toast-show');
-	    showToast()
-	  }, 300);
-	}
-	function showToast () {
-	  setTimeout(function () {
-	    $('#toast').removeClass('toast-show');
-	    setTimeout(function () {
-	      $('#toast').hide();
-	    }, 2300);
-	  }, 3000);
-	}
-
-	function loading (type) {
-	  if (type) {
-	    $('#loading').show();
-	  } else {
-	    $('#loading').hide();
-	  }
-	}
-	// function getWallectInfo () {
-	//   window.postMessage({
-	//     "target": "contentscript",
-	//     "data": {},
-	//     "method": "getAccount"
-	//   }, "*");
-
-	//   window.addEventListener("message", function (e) {
-	//     if (e.data && e.data.data && e.data.data.account) {
-	//       window.address = e.data.data.account;
-	//     }
-	//   })
-	// }
-	// getWallectInfo();
-
-	  function myRandom1(value){
-	   return parseInt(value*Math.random())
-	  }
-	  
-	  function myRandom2(value){
-	    if(Math.random()>0.5){
-			return parseInt(value*Math.random())
-		}else{
-			return -parseInt(value*Math.random())
-		}
-	  }
-	 
-	  function submit(event){
-	  	// nebPay.simulateCall(dappAddress, "0", "get", JSON.stringify([]), { 
-		  //   listener: function(res){
-		  //   	debugger
-  		// 		console.log(res)
-  		// 		var obj = JSON.parse(res.result)
-  		// 		console.log(obj)
-		  //   }
-  		// })
-
-	  	var name = $('#inputName_id').val()
-	  	if (!name) {
-	  		toast('请输入心中的TA的名字再点击开始')
-	  		return
-	  	};
-
-		//隐藏主页图片
-		$("#main_id").hide()
-		$("#input_id").hide()
-		$("#tip_id").show()
-		loading(true);
-		nebPay.simulateCall(dappAddress, "0", "set", JSON.stringify([name]), { 
-		    listener: function(res){
-		      loading(false);
-		      $("#tip_id").hide()
-		      if (res.result=='Error: [object Object]') {
-		      	toast('该名称已测试过，不能再次测试，要相信命运')
-		      	setTimeout(()=>{
-		      		location.reload() 
-		      	},4000)
-		      }else{
-		      	productFlower(res.result)
-		      	$("#yesorno_id").show()
-		      }
-		    }
-  		})
-		event.stopPropagation()
-	  }
-
-	  function productFlower(num){
-	  	//随机生成玫瑰花
-		for(var i=0 ;i<num;i++){
-		   var imgDom = document.createElement("img")
-		   imgDom.src = './img/11.png'
-		   var style='position:absolute;'
-		   style=style+'width:'+(120+myRandom1(50))+'px;'
-		   style=style+'top:' + (200+myRandom1(100))+'px;'
-		   console.log($(document.body).width())
-		   style=style+'right:'+(300+myRandom1($(document.body).width()-600))+'px;'
-		   style=style+'-webkit-transform: rotate(' + myRandom2(45)+'deg);'
-		   imgDom.style=style
-		   $("#panel_id").append(imgDom)
-		}
-	  }
-	  function bodyclick(){
-		var flowers = $("#panel_id").children()
-		if(flowers.length>0){
-			var yesorno = $("#yesorno_id")[0]
-			if(yesorno.innerText=='爱'){
-				yesorno.innerText='不爱'
-			}else{
-				yesorno.innerText='爱'
-			}
-		   var i = myRandom1(flowers.length)
-		   flowers[i].remove()
-		}else{
-			var isDisplay = $("#yesorno_id").css('display');
-			var yesorno = $("#yesorno_id")[0]
-			
-			if(isDisplay!='none'){
-				if (yesorno.innerText=='爱') {
-					toast('恭喜你，TA是爱你的！')
-				}else{
-					toast('本测试纯属娱乐，请勿相信！')
-				}
-			}
-		}
-	  }
-	  
 	</script>
 	</head>
 	<body style="text-align:center" onclick="bodyclick()">
 		<div id="input_id">
-			<div> 请输入心中的TA的名字：</div>
+			<div style="margin-bottom: 10px"> 请输入心中的TA的名字,点击开始，稍后1分钟屏幕中出现玫瑰花后就可以点击屏幕揭晓答案：</div>
 			<div>
 				<input id="inputName_id">
 				<button onclick="submit(event)">开始</button>
+                <button onclick="showRecord(event)">查看记录</button>
 			</div>
 		</div>
+
 		<div>
 		   <span style="font-size:16;display:none" id="tip_id">缓冲结束后单击屏幕揭晓答案</span>
 		</div>
 
 		<div>
-		   <span style="font-size:50;display:none" id="yesorno_id">不爱</span>
+		   <span style="font-size:50px;display:none" id="yesorno_id">不爱</span>
 		</div>
 		
 		<div id="panel_id">
@@ -178,8 +44,12 @@
 		</div>
 		
 	    <div id="main_id">
-			<img style="width:600px;margin-top:50px" src="./img/bgm.jpg"> </img>
+			<img id="main_bgm_id" style="width:600px;margin-top:50px" src="./img/bgm.jpg"> </img>
+            <div id="record_id"  style="width:300px;margin: auto;margin-top:25px">
+
+            </div>
 		</div>
+
 		<div class="footer">
 			<a target="_Blank" href="https://github.com/ChengOrangeJu/WebExtensionWallet">星云钱包安装</a>
 			<a target="_Blank" href="https://blog.nebulas.io/2018/04/12/creating-a-nas-wallet/">星云钱包开户</a>
